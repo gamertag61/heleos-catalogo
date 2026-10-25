@@ -50,40 +50,73 @@
   .dot i { display: block; height: 100%; width: 0; background: #ffb340; }
   .dot.on i { animation: fill 5s linear forwards; }
 
-  /* Cinta de categorías */
-  @keyframes marquee { to { transform: translateX(-50%); } }
-  .marquee { animation: marquee 32s linear infinite; }
+  /* Menú Drawer Funcional */
+  .drawer-overlay { opacity: 0; visibility: hidden; transition: opacity .3s ease; }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer-menu { transform: translateX(-100%); transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .drawer-menu.open { transform: translateX(0); }
 
-  /* Tarjetas sin márgenes internos y con borde azul neón al pasar el cursor */
+  /* Tarjetas sin márgenes y con hover nativo */
   .card { background: linear-gradient(180deg, #0f1826, #0b121d); border: 1px solid #1b2a3d;
-          transition: border-color .4s ease, box-shadow .4s ease, transform .4s ease; }
+          transition: border-color .4s ease, box-shadow .4s ease, transform .4s ease; 
+          min-width: 180px; scroll-snap-align: start; }
   .card:hover { border-color: rgba(47,143,255,.6); box-shadow: 0 10px 40px -10px rgba(47,143,255,.4); transform: translateY(-4px); }
+  
+  /* Esconder la barra de scroll en móviles */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
   a:focus-visible, button:focus-visible { outline: 2px solid #ffb340; outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
     .rise { animation: none; opacity: 1; }
-    .halo, .float, .marquee { animation: none; }
+    .halo, .float { animation: none; }
     .slide, .prod, .txt > *, .card, .card img { transition: none; }
     .prod { transform: none; filter: none; }
     .dot.on i { animation: none; width: 100%; }
   }
 </style>
 </head>
-<body class="min-h-screen text-zinc-100 antialiased">
+<body class="min-h-screen text-zinc-100 antialiased relative">
 
-<!-- Cabecera -->
-<header class="rise sticky top-0 z-20 border-b border-edge/70 bg-deep/80 backdrop-blur-md" style="--i:0">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
+<!-- Drawer Overlay y Menú Lateral -->
+<div id="drawer-overlay" class="drawer-overlay fixed inset-0 z-40 bg-deep/80 backdrop-blur-sm"></div>
+<aside id="drawer-menu" class="drawer-menu fixed inset-y-0 left-0 z-50 w-72 border-r border-edge bg-deep p-6 shadow-2xl">
+  <div class="flex items-center justify-between border-b border-edge/60 pb-5">
     <div class="flex items-center gap-2.5">
       <span class="h-2.5 w-2.5 rounded-full bg-sun shadow-[0_0_14px_3px_rgba(255,179,64,.55)]"></span>
-      <span class="text-lg font-semibold tracking-tight">H | Ofertas</span>
+      <span class="text-lg font-semibold tracking-tight text-white">Categorías</span>
+    </div>
+    <button id="close-menu" class="rounded-full p-2 text-zinc-400 hover:bg-edge/50 hover:text-white" aria-label="Cerrar menú">
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="mt-6 flex flex-col gap-2">
+    <a href="javascript:void(0)" class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-edge/50 hover:text-sun">Accesorios para escritorio</a>
+    <a href="javascript:void(0)" class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-edge/50 hover:text-sun">Controles</a>
+    <a href="javascript:void(0)" class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-edge/50 hover:text-sun">Monitores</a>
+    <a href="javascript:void(0)" class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-edge/50 hover:text-sun">Accesorios para PC</a>
+    <a href="javascript:void(0)" class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-edge/50 hover:text-sun">RAM / Memoria</a>
+  </nav>
+</aside>
+
+<!-- Cabecera con Menú de Hamburguesa -->
+<header class="rise sticky top-0 z-20 border-b border-edge/70 bg-deep/80 backdrop-blur-md" style="--i:0">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
+    <div class="flex items-center gap-3.5">
+      <button id="open-menu" class="p-1 text-zinc-300 transition hover:text-white active:scale-90" aria-label="Abrir menú">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-sun shadow-[0_0_14px_3px_rgba(255,179,64,.55)]"></span>
+        <span class="text-lg font-semibold tracking-tight">H | Ofertas</span>
+      </div>
     </div>
     <span class="text-xs text-zinc-400">Expiran pronto</span>
   </div>
   <div class="h-px w-full bg-edge/60" aria-hidden="true"><div id="dia" class="h-full bg-sun" style="width:0"></div></div>
 </header>
 
-<main class="mx-auto max-w-6xl px-4 pb-16 pt-4">
+<main class="mx-auto max-w-6xl px-4 pb-16 pt-4 overflow-hidden">
 
   <!-- Héroe -->
   <section class="rise relative overflow-hidden rounded-[2rem] border border-edge bg-deep/40 shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]" style="--i:1" aria-roledescription="carrusel" aria-label="Ofertas destacadas">
@@ -91,23 +124,15 @@
     <div id="dots" class="absolute inset-x-0 bottom-5 z-10 flex justify-center gap-2 md:justify-start md:px-12"></div>
   </section>
 
-  <!-- Cinta -->
-  <div class="rise mt-6 overflow-hidden border-y border-edge/60 py-3 text-sm text-zinc-400" style="--i:2" aria-hidden="true">
-    <div class="marquee flex w-max gap-8 whitespace-nowrap">
-      <span id="m1" class="flex gap-8"></span><span id="m2" class="flex gap-8"></span>
-    </div>
-  </div>
+  <h3 class="rise mt-10 text-xl font-semibold tracking-tight text-white mb-4" style="--i:2">Catálogo Express</h3>
 
-  <!-- Vitrina -->
-  <section id="grid" class="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4"></section>
+  <!-- Vitrina Scroll Horizontal (Swipe nativo para celular) -->
+  <section id="grid" class="rise no-scrollbar flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6" style="--i:3"></section>
 </main>
 
 <script>
 (() => {
   const mxn = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
-  
-  // Para lograr el efecto real de iluminación flotante que viste en el video, 
-  // es vital que reemplaces estos links por imágenes PNG con fondo transparente.
   const img = (txt, bg) => `https://placehold.co/800x800/${bg}/e8eef7?text=${encodeURIComponent(txt)}`;
 
   const P = [
@@ -124,6 +149,16 @@
     { p: 0, h: 'Tu música, sin el ruido.' }
   ];
   const off = p => Math.round((1 - p.n / p.o) * 100);
+
+  // Lógica Menú Hamburguesa
+  const btnOpen = document.getElementById('open-menu');
+  const btnClose = document.getElementById('close-menu');
+  const overlay = document.getElementById('drawer-overlay');
+  const drawer = document.getElementById('drawer-menu');
+  const toggleMenu = () => { overlay.classList.toggle('open'); drawer.classList.toggle('open'); document.body.classList.toggle('overflow-hidden'); };
+  btnOpen.addEventListener('click', toggleMenu);
+  btnClose.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', toggleMenu);
 
   // Héroe
   const hero = document.getElementById('hero'), dots = document.getElementById('dots');
@@ -149,8 +184,7 @@
       </div>
     </article>`;
   }).join('');
-  dots.innerHTML = H.map((_, k) =>
-    `<button class="dot ${k === 0 ? 'on' : ''} h-1.5 w-10 overflow-hidden rounded-full bg-edge" aria-label="Oferta ${k + 1}"><i></i></button>`).join('');
+  dots.innerHTML = H.map((_, k) => `<button class="dot ${k === 0 ? 'on' : ''} h-1.5 w-10 overflow-hidden rounded-full bg-edge" aria-label="Oferta ${k + 1}"><i></i></button>`).join('');
 
   const slides = [...hero.children], ds = [...dots.children];
   let cur = 0, timer;
@@ -158,40 +192,33 @@
     slides[cur].classList.remove('on'); slides[cur].setAttribute('aria-hidden', 'true'); ds[cur].classList.remove('on');
     cur = k;
     slides[cur].classList.add('on'); slides[cur].setAttribute('aria-hidden', 'false');
-    void ds[cur].offsetWidth;
-    ds[cur].classList.add('on');
+    void ds[cur].offsetWidth; ds[cur].classList.add('on');
   }
   function start() { clearInterval(timer); timer = setInterval(() => go((cur + 1) % slides.length), 5000); }
   ds.forEach((d, k) => d.addEventListener('click', () => { go(k); start(); }));
   document.addEventListener('visibilitychange', () => document.hidden ? clearInterval(timer) : (go(cur), start()));
   start();
 
-  // Cinta
-  const cats = ['Audífonos', 'Monitores', 'Teclados', 'Smartwatch', 'Mouse', 'Bocinas', 'Gaming', 'Accesorios'];
-  const cinta = cats.map(c => `<span class="flex items-center gap-8">${c}<i class="h-1 w-1 rounded-full bg-glow drop-shadow-[0_0_5px_#2f8fff]"></i></span>`).join('');
-  document.getElementById('m1').innerHTML = cinta; document.getElementById('m2').innerHTML = cinta;
-
-  // Vitrina (Márgenes eliminados y resplandor ajustado)
+  // Vitrina (Scroll Horizontal, sin márgenes, hover fluido)
   document.getElementById('grid').innerHTML = P.map((p, k) => `
-    <article class="card rise group flex flex-col rounded-2xl overflow-hidden" style="--i:${k + 4}">
-      <a href="javascript:void(0)" class="relative block bg-deep/50 aspect-square overflow-hidden" tabindex="-1" aria-hidden="true">
+    <article class="card flex flex-col rounded-2xl overflow-hidden w-[220px] md:w-[260px] shrink-0">
+      <a href="javascript:void(0)" class="relative block bg-deep/50 aspect-[4/3] overflow-hidden" tabindex="-1" aria-hidden="true">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(47,143,255,0.15)_0%,transparent_70%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100 z-0"></div>
-        <img src="${p.i}" alt="" loading="lazy" class="relative z-10 h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(47,143,255,0.5)]">
+        <img src="${p.i}" alt="" loading="lazy" class="relative z-10 h-full w-full object-cover transition duration-500 ease-out hover:scale-105">
         <span class="absolute left-3 top-3 z-20 rounded-full bg-deep/90 px-2.5 py-1 text-xs font-semibold text-sun backdrop-blur border border-edge/50">-${off(p)}%</span>
       </a>
       <div class="flex flex-1 flex-col p-4 pt-3">
         <h3 class="line-clamp-2 min-h-[2.5rem] text-sm leading-5 text-zinc-200">${p.t}</h3>
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-lg font-semibold text-sun drop-shadow-[0_0_10px_rgba(255,179,64,.35)]">${mxn.format(p.n)}</span>
-          <span class="text-sm text-zinc-500 line-through">${mxn.format(p.o)}</span>
+          <span class="text-xs text-zinc-500 line-through">${mxn.format(p.o)}</span>
         </div>
-        <a href="javascript:void(0)" class="mt-4 block w-full rounded-full bg-sun py-2.5 text-center text-sm font-bold text-deep transition duration-300 hover:brightness-110 active:scale-95 shadow-[0_0_15px_-5px_rgba(255,179,64,.4)]">Aprovechar oferta</a>
+        <a href="javascript:void(0)" class="mt-4 block w-full rounded-full bg-sun py-2 text-center text-sm font-bold text-deep transition duration-300 hover:brightness-110 active:scale-95 shadow-[0_0_15px_-5px_rgba(255,179,64,.4)]">Aprovechar</a>
       </div>
     </article>`).join('');
 
-  // Barra sutil: avance del día
-  const d = new Date();
-  document.getElementById('dia').style.width = (((d.getHours() * 60 + d.getMinutes()) / 1440) * 100).toFixed(1) + '%';
+  // Barra avance día
+  const d = new Date(); document.getElementById('dia').style.width = (((d.getHours() * 60 + d.getMinutes()) / 1440) * 100).toFixed(1) + '%';
 })();
 </script>
 </body>
