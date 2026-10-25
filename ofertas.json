@@ -1,0 +1,29 @@
+{
+  "actualizado": "2026-10-24T09:30:00-06:00",
+  "productos": [
+    {
+      "id": "MLM100000001",
+      "titulo": "Audífonos Bluetooth inalámbricos con cancelación de ruido y 40 h de batería",
+      "imagen": "https://placehold.co/600x600/ffffff/222222?text=Audifonos",
+      "precio_original": 1299,
+      "precio_oferta": 849,
+      "enlace": "https://meli.la/EJEMPLO1"
+    },
+    {
+      "id": "MLM100000002",
+      "titulo": "Smartwatch deportivo con GPS, monitor de sueño y pantalla AMOLED de 1.4 pulgadas",
+      "imagen": "https://placehold.co/600x600/ffffff/222222?text=Smartwatch",
+      "precio_original": 2199,
+      "precio_oferta": 1399,
+      "enlace": "https://meli.la/EJEMPLO2"
+    },
+    {
+      "id": "MLM100000003",
+      "titulo": "Teclado mecánico compacto 75% inalámbrico con switches intercambiables",
+      "imagen": "https://placehold.co/600x600/ffffff/222222?text=Teclado",
+      "precio_original": 1599,
+      "precio_oferta": 1199,
+      "enlace": "https://meli.la/EJEMPLO3"
+    }
+  ]
+}
